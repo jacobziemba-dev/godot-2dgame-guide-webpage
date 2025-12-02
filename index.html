@@ -3,139 +3,1796 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Godot 2D Game Development Guide</title>
+    <title>Godot RPG Quest Tracker</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@400;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2d3748;
+            overflow-x: hidden;
         }
-
-        header {
-            background: linear-gradient(135deg, #478cbf, #2d5d8b);
-            color: white;
-            padding: 2rem;
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Hero Header */
+        .hero {
             text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
         }
-
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+        
+        .hero h1 {
+            font-family: 'Righteous', cursive;
+            font-size: 3.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-
-        main {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+        
+        .hero p {
+            font-size: 1.3em;
+            color: #4a5568;
+            font-weight: 700;
         }
-
-        section {
+        
+        /* Overall Progress */
+        .overall-progress {
             background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.8s ease-out 0.2s both;
         }
-
-        section h2 {
-            color: #478cbf;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #478cbf;
-            padding-bottom: 0.5rem;
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-
-        ul {
-            margin-left: 1.5rem;
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
-
-        li {
-            margin-bottom: 0.5rem;
+        
+        .progress-header h2 {
+            font-family: 'Righteous', cursive;
+            font-size: 2em;
+            color: #667eea;
         }
-
-        footer {
+        
+        .progress-stats {
+            display: flex;
+            gap: 30px;
+            font-size: 1.1em;
+            font-weight: 700;
+        }
+        
+        .stat {
             text-align: center;
-            padding: 2rem;
-            background: #2d5d8b;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            color: #667eea;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            transition: width 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            color: white;
+            font-weight: 800;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Week Cards */
+        .weeks-grid {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .week-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.6s ease-out both;
+        }
+        
+        .week-card:nth-child(1) { animation-delay: 0.1s; }
+        .week-card:nth-child(2) { animation-delay: 0.15s; }
+        .week-card:nth-child(3) { animation-delay: 0.2s; }
+        .week-card:nth-child(4) { animation-delay: 0.25s; }
+        .week-card:nth-child(5) { animation-delay: 0.3s; }
+        
+        .week-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .week-card.completed {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-
-        a {
-            color: #478cbf;
+        
+        .week-card.completed .week-header h3,
+        .week-card.completed .week-meta,
+        .week-card.completed .episode-title {
+            color: white;
+        }
+        
+        .week-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        
+        .week-card.completed .week-header {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .week-header:hover {
+            background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
+        }
+        
+        .week-card.completed .week-header:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .week-info {
+            flex: 1;
+        }
+        
+        .week-info h3 {
+            font-family: 'Righteous', cursive;
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .week-meta {
+            color: #718096;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .week-progress {
+            text-align: right;
+        }
+        
+        .week-percentage {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: #667eea;
+            display: block;
+        }
+        
+        .week-card.completed .week-percentage {
+            color: white;
+        }
+        
+        .expand-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+        
+        .week-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Episodes */
+        .episodes {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        
+        .week-card.expanded .episodes {
+            max-height: 3000px;
+        }
+        
+        .episode {
+            padding: 20px 25px;
+            border-top: 2px solid #edf2f7;
+            transition: background 0.2s ease;
+        }
+        
+        .week-card.completed .episode {
+            border-top-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .episode:hover {
+            background: #f7fafc;
+        }
+        
+        .week-card.completed .episode:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .episode-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .episode-checkbox {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            appearance: none;
+            border: 3px solid #cbd5e0;
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .episode-checkbox:checked {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+        }
+        
+        .episode-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+        }
+        
+        .episode-title {
+            flex: 1;
+            font-size: 1.3em;
+            font-weight: 800;
+            color: #2d3748;
+            min-width: 200px;
         }
 
-        footer a {
-            color: #8fc5e8;
+        /* Video Button & Container */
+        .btn-video {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-video:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+
+        .video-container {
+            display: none;
+            width: 100%;
+            margin-bottom: 20px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            animation: fadeIn 0.4s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-container.show {
+            display: block;
+        }
+        
+        .episode-goal {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .week-card.completed .episode-goal {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+        
+        .tasks {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .task {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        
+        .task:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+        
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            appearance: none;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            position: relative;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .task-checkbox:checked {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            border-color: #48bb78;
+        }
+        
+        .task-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+        }
+        
+        .task-text {
+            flex: 1;
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+        
+        .task.completed .task-text {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        
+        /* Modal & Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(4px);
+        }
+        
+        .overlay.show {
+            display: block;
+        }
+
+        .celebration, .confirm-modal, .quest-modal, .focus-modal, .quiz-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            animation: popIn 0.3s ease-out;
+            max-width: 90%;
+            width: 500px;
+        }
+        
+        .quest-modal, .focus-modal, .quiz-modal {
+            width: 700px;
+            text-align: left;
+            border: 4px solid #667eea;
+        }
+
+        .focus-modal {
+            width: 500px;
+            text-align: center;
+        }
+        
+        .celebration.show, .confirm-modal.show, .quest-modal.show, .focus-modal.show, .quiz-modal.show {
+            display: block;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        
+        .celebration h2, .confirm-modal h2 {
+            font-family: 'Righteous', cursive;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .quest-modal h2, .focus-modal h2, .quiz-modal h2 {
+            font-family: 'Righteous', cursive;
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .confirm-modal h2 {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .celebration p, .confirm-modal p {
+            font-size: 1.3em;
+            color: #4a5568;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .quest-content {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .quest-content h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .quest-content ul {
+            margin-left: 20px;
+            margin-top: 10px;
+            color: #4a5568;
+        }
+        
+        .quest-content li {
+            margin-bottom: 5px;
+        }
+
+        /* Focus Timer Specific Styles */
+        .timer-display {
+            font-size: 5em;
+            font-family: 'Righteous', cursive;
+            color: #4a5568;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+            transition: color 0.3s;
+        }
+        
+        .timer-display.timer-active {
+            color: #667eea;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .focus-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .focus-tip {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-style: italic;
+            border: 2px dashed #818cf8;
+            display: none;
+        }
+        
+        /* Quiz Specific Styles */
+        .quiz-option {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quiz-option:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+        
+        .quiz-option.correct {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+        
+        .quiz-option.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 3px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .btn-ai {
+            background: linear-gradient(135deg, #9f7aea 0%, #b83280 100%);
+            color: white;
+        }
+        
+        .btn-ai:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(184, 50, 128, 0.4);
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c53030;
+            transform: translateY(-3px);
+        }
+        
+        /* Tips Section */
+        .tips {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tips h2 {
+            font-family: 'Righteous', cursive;
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .tip-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f7fafc;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .tip-item strong {
+            color: #667eea;
+            font-size: 1.2em;
+        }
+        
+        .tip-item p {
+            margin-top: 8px;
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #4a5568;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            
+            .hero p {
+                font-size: 1em;
+            }
+            
+            .progress-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .week-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .week-progress {
+                text-align: center;
+            }
+            
+            .celebration, .confirm-modal, .quest-modal, .focus-modal, .quiz-modal {
+                padding: 30px;
+                width: 90%;
+            }
+            
+            .celebration h2, .confirm-modal h2 {
+                font-size: 2em;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Godot 2D Game Development Guide</h1>
-        <p>Learn to create amazing 2D games with Godot Engine</p>
-    </header>
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="celebration" id="celebration">
+        <h2>🎉 Level Complete! 🎉</h2>
+        <p id="celebrationText"></p>
+        <button class="btn btn-primary" onclick="closeCelebration()">Awesome!</button>
+    </div>
 
-    <main>
-        <section>
-            <h2>Welcome</h2>
-            <p>Welcome to the Godot 2D Game Development Guide! This resource will help you learn how to create 2D games using the powerful and free Godot game engine.</p>
-        </section>
+    <div class="confirm-modal" id="resetModal">
+        <h2>⚠️ Reset Progress?</h2>
+        <p>Are you sure you want to reset all progress? This cannot be undone!</p>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeResetModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="confirmReset()">Yes, Reset</button>
+        </div>
+    </div>
+    
+    <!-- Gemini Quest Modal -->
+    <div class="quest-modal" id="questModal">
+        <h2>✨ AI Side Quest Generator</h2>
+        <div id="questLoading" style="display:none;">
+            <div class="loading-spinner"></div>
+            <p style="text-align: center; color: #667eea;">Consulting the Oracle...</p>
+        </div>
+        <div id="questResult" class="quest-content" style="display:none;"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeQuestModal()">Close</button>
+            <button class="btn btn-ai" onclick="generatePracticeQuest()">✨ Reroll Quest</button>
+        </div>
+    </div>
 
-        <section>
-            <h2>Getting Started</h2>
-            <ul>
-                <li>Download and install <a href="https://godotengine.org/download" target="_blank">Godot Engine</a></li>
-                <li>Familiarize yourself with the Godot interface</li>
-                <li>Learn the basics of GDScript</li>
-                <li>Create your first 2D scene</li>
-            </ul>
-        </section>
+    <!-- Focus Timer Modal -->
+    <div class="focus-modal" id="focusModal">
+        <h2>⏱️ Stay on Task</h2>
+        
+        <div id="focusTip" class="focus-tip"></div>
+        <div id="focusLoading" style="display:none;">
+            <div class="loading-spinner" style="width:20px; height:20px; border-width:2px;"></div>
+            <p style="font-size:0.9em;">Asking AI Focus Coach...</p>
+        </div>
 
-        <section>
-            <h2>Core Concepts</h2>
-            <ul>
-                <li><strong>Nodes:</strong> The building blocks of Godot games</li>
-                <li><strong>Scenes:</strong> Reusable collections of nodes</li>
-                <li><strong>Scripts:</strong> Add behavior to your nodes</li>
-                <li><strong>Signals:</strong> Communication between nodes</li>
-            </ul>
-        </section>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        
+        <div class="focus-controls">
+            <button class="btn btn-secondary" onclick="setTimer(25)">25m</button>
+            <button class="btn btn-secondary" onclick="setTimer(50)">50m</button>
+            <button class="btn btn-secondary" onclick="setTimer(5)">5m Break</button>
+        </div>
+        
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeFocusModal()">Close</button>
+            <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">Start Focus</button>
+            <button class="btn btn-ai" onclick="generateFocusTip()">🤖 AI Coach</button>
+        </div>
+    </div>
 
-        <section>
-            <h2>2D Game Features</h2>
-            <ul>
-                <li>Sprite animation and movement</li>
-                <li>Collision detection and physics</li>
-                <li>Tilemaps and level design</li>
-                <li>User interface elements</li>
-                <li>Audio and sound effects</li>
-            </ul>
-        </section>
+    <!-- Gemini Quiz Modal -->
+    <div class="quiz-modal" id="quizModal">
+        <h2>🧠 Knowledge Quiz</h2>
+        <div id="quizLoading" style="display:none;">
+            <div class="loading-spinner"></div>
+            <p style="text-align: center; color: #667eea;">Preparing your challenge...</p>
+        </div>
+        <div id="quizResult" class="quest-content" style="display:none;"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeQuizModal()">Close</button>
+            <button class="btn btn-ai" onclick="generateQuiz()">🧠 Next Question</button>
+        </div>
+    </div>
 
-        <section>
-            <h2>Resources</h2>
-            <ul>
-                <li><a href="https://docs.godotengine.org/" target="_blank">Official Godot Documentation</a></li>
-                <li><a href="https://godotengine.org/community" target="_blank">Godot Community</a></li>
-                <li><a href="https://godotengine.org/asset-library/asset" target="_blank">Asset Library</a></li>
-            </ul>
-        </section>
-    </main>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>🎮 Godot RPG Quest 🎮</h1>
+            <p>Your Epic Journey to Build an Action RPG</p>
+        </div>
+        
+        <!-- Overall Progress -->
+        <div class="overall-progress">
+            <div class="progress-header">
+                <h2>Overall Quest Progress</h2>
+                <div class="progress-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="completedTasks">0</span>
+                        <span class="stat-label">Tasks Done</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalTasks">0</span>
+                        <span class="stat-label">Total Tasks</span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="overallProgressBar" style="width: 0%">
+                    <span id="overallPercentage">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Week Cards -->
+        <div class="weeks-grid" id="weeksGrid"></div>
+        
+        <!-- Action Buttons -->
+        <div class="actions">
+            <button class="btn btn-ai" onclick="openQuestModal()">✨ Generate Quest</button>
+            <button class="btn btn-ai" onclick="openFocusModal()">⏱️ Stay on Task</button>
+            <button class="btn btn-ai" onclick="openQuizModal()">🧠 Quiz Me</button>
+            <button class="btn btn-primary" onclick="showResetModal()">🔄 Reset</button>
+            <button class="btn btn-secondary" onclick="exportProgress()">💾 Export JSON</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('importInput').click()">📂 Import JSON</button>
+            <input type="file" id="importInput" style="display: none;" accept=".json" onchange="importProgress(this)">
+        </div>
+        
+        <!-- Tips -->
+        <div class="tips">
+            <h2>💡 Success Tips</h2>
+            <div class="tip-item">
+                <strong>One Step at a Time</strong>
+                <p>Focus on checking off one task before moving to the next. Small wins build momentum!</p>
+            </div>
+            <div class="tip-item">
+                <strong>Take Breaks</strong>
+                <p>Step away between episodes. Your brain needs time to process what you learned.</p>
+            </div>
+            <div class="tip-item">
+                <strong>Test Everything</strong>
+                <p>After each task, press F6 and test it works. Catch bugs early!</p>
+            </div>
+            <div class="tip-item">
+                <strong>Save Constantly</strong>
+                <p>Hit Ctrl+S after every change. Make it a reflex!</p>
+            </div>
+        </div>
+    </div>
 
-    <footer>
-        <p>Built with ❤️ for the Godot community</p>
-        <p><a href="https://github.com/jacobziemba-dev/godot-2dgame-guide-webpage" target="_blank">View on GitHub</a></p>
-    </footer>
+    <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+
+        // --- GEMINI API SETUP ---
+        const apiKey = ""; // System provides this
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const textModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-09-2025" });
+
+        // --- QUEST GENERATOR ---
+        window.openQuestModal = function() {
+            document.getElementById('questModal').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+            generatePracticeQuest();
+        }
+
+        window.closeQuestModal = function() {
+            document.getElementById('questModal').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        window.generatePracticeQuest = async function() {
+            const resultDiv = document.getElementById('questResult');
+            const loadingDiv = document.getElementById('questLoading');
+            
+            resultDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
+
+            let completedSkills = getCompletedSkills();
+            let promptContext = completedSkills.length === 0 
+                ? "The user has just started. Suggest a very basic challenge." 
+                : `The user has completed: ${completedSkills.join(", ")}.`;
+
+            const prompt = `
+                ${promptContext}
+                Generate a creative 'Side Quest' for Godot 4. Small, self-contained feature not in the list.
+                Output HTML: <h3>Quest Title</h3><p><strong>Brief:</strong> ...</p><ul><li>Step 1</li></ul>
+            `;
+
+            try {
+                const result = await textModel.generateContent(prompt);
+                resultDiv.innerHTML = result.response.text().replace(/```html/g, '').replace(/```/g, '');
+                loadingDiv.style.display = 'none';
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                console.error(error);
+                resultDiv.innerHTML = `<p style="color:red">Error: ${error.message}</p>`;
+                loadingDiv.style.display = 'none';
+                resultDiv.style.display = 'block';
+            }
+        }
+
+        // --- FOCUS TIMER ---
+        let timerInterval;
+        let timeLeft = 25 * 60; // seconds
+        let isTimerRunning = false;
+
+        window.openFocusModal = function() {
+            document.getElementById('focusModal').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+            // Clear previous tip to encourage getting a new one
+            document.getElementById('focusTip').style.display = 'none';
+            document.getElementById('focusTip').textContent = '';
+        }
+
+        window.closeFocusModal = function() {
+            document.getElementById('focusModal').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+            pauseTimer();
+        }
+
+        window.setTimer = function(minutes) {
+            pauseTimer();
+            timeLeft = minutes * 60;
+            updateTimerDisplay();
+            document.getElementById('startBtn').textContent = "Start Focus";
+        }
+
+        window.toggleTimer = function() {
+            if (isTimerRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            isTimerRunning = true;
+            document.getElementById('startBtn').textContent = "Pause";
+            document.getElementById('startBtn').classList.add('btn-secondary');
+            document.getElementById('startBtn').classList.remove('btn-primary');
+            document.getElementById('timerDisplay').classList.add('timer-active');
+            
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    pauseTimer();
+                    celebrate("Time's up! Great work! ☕");
+                    new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play().catch(e => console.log('Audio play failed'));
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            isTimerRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('startBtn').textContent = "Start Focus";
+            document.getElementById('startBtn').classList.add('btn-primary');
+            document.getElementById('startBtn').classList.remove('btn-secondary');
+            document.getElementById('timerDisplay').classList.remove('timer-active');
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        window.generateFocusTip = async function() {
+            const tipDiv = document.getElementById('focusTip');
+            const loadingDiv = document.getElementById('focusLoading');
+            
+            tipDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
+
+            // Find current active week/episode
+            let activeTask = "General Godot Learning";
+            for (let i = 0; i < tutorialData.length; i++) {
+                const week = tutorialData[i];
+                // Find first incomplete week
+                const weekComplete = week.episodes.every((ep, eIdx) => 
+                     ep.tasks.every((t, tIdx) => progress[`w${i}-e${eIdx}-t${tIdx}`])
+                );
+                
+                if (!weekComplete) {
+                    activeTask = week.title;
+                    // Try to find specific episode
+                    for(let j=0; j < week.episodes.length; j++) {
+                        const ep = week.episodes[j];
+                        if (!ep.tasks.every((t, tIdx) => progress[`w${i}-e${j}-t${tIdx}`])) {
+                            activeTask = `${week.title} - ${ep.title}`;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            const prompt = `
+                The user is about to start a deep work session to learn Game Development.
+                They are currently working on: "${activeTask}".
+                Give them one concise, actionable, and encouraging sentence on how to stay focused on this specific topic and avoid getting stuck or distracted.
+                Do not use quotes.
+            `;
+
+            try {
+                const result = await textModel.generateContent(prompt);
+                tipDiv.textContent = "🤖 Coach: " + result.response.text();
+                loadingDiv.style.display = 'none';
+                tipDiv.style.display = 'block';
+            } catch (error) {
+                console.error(error);
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        // --- QUIZ GENERATOR ---
+        window.openQuizModal = function() {
+            document.getElementById('quizModal').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+            generateQuiz();
+        }
+
+        window.closeQuizModal = function() {
+            document.getElementById('quizModal').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        window.generateQuiz = async function() {
+            const resultDiv = document.getElementById('quizResult');
+            const loadingDiv = document.getElementById('quizLoading');
+            
+            resultDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
+
+            let completedSkills = getCompletedSkills();
+            let context = completedSkills.length > 0 ? completedSkills.join(", ") : "General Godot 4 Basics";
+
+            const prompt = `
+                Generate a multiple choice question about Godot 4 game development based on these topics: ${context}.
+                Return ONLY valid JSON:
+                {
+                    "question": "The question text?",
+                    "options": ["Option A", "Option B", "Option C", "Option D"],
+                    "correctIndex": 0,
+                    "explanation": "Why it is correct."
+                }
+            `;
+
+            try {
+                const result = await textModel.generateContent({
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                    generationConfig: { responseMimeType: "application/json" }
+                });
+                
+                const data = JSON.parse(result.response.text());
+                
+                let html = `<h3>${data.question}</h3>`;
+                data.options.forEach((opt, idx) => {
+                    html += `<div class="quiz-option" onclick="checkAnswer(this, ${idx}, ${data.correctIndex}, '${data.explanation.replace(/'/g, "\\'")}')">${opt}</div>`;
+                });
+                html += `<div id="quizExplanation" style="display:none; margin-top:15px; padding:10px; background:#e0e7ff; border-radius:8px;"></div>`;
+                
+                resultDiv.innerHTML = html;
+                loadingDiv.style.display = 'none';
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                console.error(error);
+                resultDiv.innerHTML = `<p style="color:red">Error generating quiz.</p>`;
+                loadingDiv.style.display = 'none';
+                resultDiv.style.display = 'block';
+            }
+        }
+
+        window.checkAnswer = function(element, selectedIdx, correctIdx, explanation) {
+            // Disable all clicks
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach((opt, idx) => {
+                opt.onclick = null;
+                opt.style.cursor = 'default';
+                if (idx === correctIdx) opt.classList.add('correct');
+                else if (idx === selectedIdx) opt.classList.add('wrong');
+            });
+
+            const expDiv = document.getElementById('quizExplanation');
+            expDiv.innerHTML = `<strong>${selectedIdx === correctIdx ? "Correct! 🎉" : "Incorrect."}</strong><br>${explanation}`;
+            expDiv.style.display = 'block';
+        }
+
+        function getCompletedSkills() {
+            let skills = [];
+            tutorialData.forEach((week, wIdx) => {
+                week.episodes.forEach((ep, eIdx) => {
+                    const allTasksDone = ep.tasks.every((t, tIdx) => 
+                        progress[`w${wIdx}-e${eIdx}-t${tIdx}`]
+                    );
+                    if (allTasksDone) skills.push(ep.title);
+                });
+            });
+            return skills;
+        }
+
+
+        // --- EXISTING LOGIC (Exposed to window) ---
+        // Tutorial Data Structure
+        const tutorialData = [
+            {
+                week: 1,
+                title: "Character Movement & Animation",
+                episodes: [
+                    {
+                        title: "Episode 1: Basic Top Down Character",
+                        videoId: "mAbG8OI-uJA",
+                        goal: "Get your character moving on screen",
+                        tasks: [
+                            "Create Player scene with CharacterBody2D",
+                            "Add Sprite2D and set texture",
+                            "Add CollisionShape2D",
+                            "Setup input actions (WASD + Arrows)",
+                            "Write movement code with Input.get_vector()",
+                            "Test movement (F6)"
+                        ]
+                    },
+                    {
+                        title: "Episode 2: Idle & Walk Animations",
+                        videoId: "weryvDk2D7w",
+                        goal: "Make your character animate when walking",
+                        tasks: [
+                            "Setup sprite frames (Hframes/Vframes)",
+                            "Add AnimationPlayer node",
+                            "Create Idle_Down animation",
+                            "Create Walk_Down animation",
+                            "Create animations for Up and Side directions",
+                            "Add animation code to player script",
+                            "Test all animations work"
+                        ]
+                    },
+                    {
+                        title: "Episode 3: Player State Machine",
+                        videoId: "S8lMTwH9bhI",
+                        goal: "Organize code for future features",
+                        tasks: [
+                            "Create State base class (State.gd)",
+                            "Create StateMachine script",
+                            "Create State_Idle script",
+                            "Create State_Walk script",
+                            "Connect states in Inspector",
+                            "Update Player script to use states",
+                            "Test state machine works"
+                        ]
+                    }
+                ]
+            },
+            {
+                week: 2,
+                title: "World Building",
+                episodes: [
+                    {
+                        title: "Episode 4: Tilemaps and Tilesets",
+                        videoId: "00qG_A50pIE",
+                        goal: "Build your game world",
+                        tasks: [
+                            "Create Level_01 scene",
+                            "Add TileMapLayer node",
+                            "Create TileSet from dungeon.png",
+                            "Add collision to wall tiles",
+                            "Paint your first room",
+                            "Add Player to level",
+                            "Test collision (F5)"
+                        ]
+                    },
+                    {
+                        title: "Episode 8: Auto Camera Limits",
+                        videoId: "uE7M2T4c-vE",
+                        goal: "Keep camera inside level bounds",
+                        tasks: [
+                            "Create LevelManager autoload",
+                            "Calculate tilemap bounds",
+                            "Set camera limits dynamically",
+                            "Test camera stays in bounds"
+                        ]
+                    }
+                ]
+            },
+            {
+                week: 3,
+                title: "Combat System",
+                episodes: [
+                    {
+                        title: "Episode 5: Player Attack State",
+                        videoId: "EQ4o0iH4p9Q",
+                        goal: "Make your player swing a sword",
+                        tasks: [
+                            "Add 'attack' input action",
+                            "Create attack animations (Down/Up/Side)",
+                            "Create State_Attack script",
+                            "Connect attack to Idle and Walk states",
+                            "Test attacking (Spacebar)"
+                        ]
+                    },
+                    {
+                        title: "Episode 6: Hit & Hurt Boxes",
+                        videoId: "x2eBuVNT0Xk",
+                        goal: "Make attacks damage enemies",
+                        tasks: [
+                            "Create HitBox scene with Area2D",
+                            "Create HurtBox scene with Area2D",
+                            "Setup collision layers (Player/Enemy/HitBox)",
+                            "Add HitBox to Player (disabled by default)",
+                            "Enable HitBox during attack animation",
+                            "Test no errors appear"
+                        ]
+                    }
+                ]
+            },
+            {
+                week: 4,
+                title: "Enemy AI",
+                episodes: [
+                    {
+                        title: "Episode 9-10: Slime Enemy",
+                        videoId: "2J7M8q2Y2Ww",
+                        goal: "Create wandering enemy that takes damage",
+                        tasks: [
+                            "Create Slime scene with CharacterBody2D",
+                            "Add HurtBox to Slime",
+                            "Add enemy stats (health, speed)",
+                            "Add DetectionZone Area2D",
+                            "Create enemy state machine",
+                            "Create State_EnemyIdle script",
+                            "Create State_EnemyWander script",
+                            "Create State_EnemyChase script",
+                            "Connect detection signals",
+                            "Test enemy wanders and chases"
+                        ]
+                    }
+                ]
+            },
+            {
+                week: 5,
+                title: "Items & Inventory",
+                episodes: [
+                    {
+                        title: "Episode 16: Resource-Based Inventory",
+                        goal: "Create data-driven item system",
+                        tasks: [
+                            "Create ItemData resource script",
+                            "Create test items (Sword.tres, Potion.tres)",
+                            "Create Pickup scene with Area2D",
+                            "Add pickup script that reads ItemData",
+                            "Add pickups to level",
+                            "Test picking up items"
+                        ]
+                    },
+                    {
+                        title: "Episode 19: Item Drops",
+                        goal: "Make enemies drop items",
+                        tasks: [
+                            "Create drop chance system",
+                            "Spawn pickups when enemy dies",
+                            "Test drops appear"
+                        ]
+                    },
+                    {
+                        title: "Episode 20: Treasure Chests",
+                        goal: "Add interactive chests",
+                        tasks: [
+                            "Create Chest scene",
+                            "Add interaction system",
+                            "Spawn items when opened",
+                            "Test chest interaction"
+                        ]
+                    }
+                ]
+            },
+            {
+                week: 6,
+                title: "Puzzles & Interaction",
+                episodes: [
+                    {
+                        title: "Episode 23-24: Dungeon Puzzles",
+                        goal: "Create Zelda-style puzzle mechanics",
+                        tasks: [
+                            "Create PressurePlate scene",
+                            "Create BarredDoor scene",
+                            "Create PushableStatue scene",
+                            "Connect plate signal to door",
+                            "Add push physics to statue",
+                            "Test puzzle works"
+                        ]
+                    },
+                    {
+                        title: "Episode 27: Item Magnet",
+                        goal: "Make items drift toward player",
+                        tasks: [
+                            "Add magnet Area2D to player",
+                            "Update pickup script with move_toward()",
+                            "Test items get pulled to player"
+                        ]
+                    }
+                ]
+            },
+            {
+                week: 7,
+                title: "UI & Menus",
+                episodes: [
+                    {
+                        title: "Episode 37: Title Screen",
+                        goal: "Create main menu",
+                        tasks: [
+                            "Create MainMenu scene",
+                            "Add title label",
+                            "Add Start/Settings/Quit buttons",
+                            "Connect button signals",
+                            "Set as main scene",
+                            "Test menu works"
+                        ]
+                    },
+                    {
+                        title: "Episode 40-41: Game Over & Camera Shake",
+                        goal: "Add game over screen and visual feedback",
+                        tasks: [
+                            "Create State_Death for player",
+                            "Create GameOver UI",
+                            "Connect death to UI display",
+                            "Add camera shake script",
+                            "Test death and shake"
+                        ]
+                    }
+                ]
+            },
+            {
+                week: 8,
+                title: "NPCs & Dialog",
+                episodes: [
+                    {
+                        title: "Episode 29-30: NPC Patrol",
+                        goal: "Create NPCs with patrol paths",
+                        tasks: [
+                            "Create NPC base class",
+                            "Create PatrolPath with @tool script",
+                            "Implement State_Patrol",
+                            "Test NPC follows path"
+                        ]
+                    },
+                    {
+                        title: "Episode 31-36: Dialog System",
+                        goal: "Add conversations with NPCs",
+                        tasks: [
+                            "Create DialogBox UI",
+                            "Create DialogData resource",
+                            "Implement dialog trigger system",
+                            "Add choice branching",
+                            "Test full conversation"
+                        ]
+                    }
+                ]
+            },
+            {
+                week: 9,
+                title: "Shop & Economy",
+                episodes: [
+                    {
+                        title: "Episode 67-69: Shop System",
+                        goal: "Create functioning shop",
+                        tasks: [
+                            "Create Shop UI with ScrollContainer",
+                            "Create ShopSlot scene",
+                            "Implement buy/sell logic",
+                            "Add gold currency system",
+                            "Test buying and selling"
+                        ]
+                    }
+                ]
+            }
+        ];
+        
+        // Expose data to window for the Gemini function above
+        window.tutorialData = tutorialData;
+
+        // Initialize
+        let progress = loadProgress();
+        // Expose progress to window
+        window.progress = progress;
+        
+        function loadProgress() {
+            const saved = localStorage.getItem('godotRPGProgress');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return {};
+        }
+        
+        function saveProgress() {
+            localStorage.setItem('godotRPGProgress', JSON.stringify(progress));
+            // Update window.progress reference just in case
+            window.progress = progress;
+        }
+        
+        window.renderWeeks = function() {
+            const grid = document.getElementById('weeksGrid');
+            grid.innerHTML = '';
+            
+            tutorialData.forEach((week, weekIndex) => {
+                const weekCard = document.createElement('div');
+                weekCard.className = 'week-card';
+                weekCard.id = `week-${weekIndex}`;
+                
+                // Calculate week progress
+                const totalTasks = week.episodes.reduce((sum, ep) => sum + ep.tasks.length, 0);
+                const completedTasks = week.episodes.reduce((sum, ep, epIndex) => {
+                    return sum + ep.tasks.filter((task, taskIndex) => {
+                        return progress[`w${weekIndex}-e${epIndex}-t${taskIndex}`];
+                    }).length;
+                }, 0);
+                const weekPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                
+                if (weekPercentage === 100) {
+                    weekCard.classList.add('completed');
+                }
+                
+                // Week Header
+                const header = document.createElement('div');
+                header.className = 'week-header';
+                header.onclick = (e) => {
+                    // Don't toggle if clicking a video button or interactive element inside header
+                    if (!e.target.closest('.btn-video')) {
+                        toggleWeek(weekIndex);
+                    }
+                };
+                header.innerHTML = `
+                    <div class="week-info">
+                        <h3>Week ${week.week}: ${week.title}</h3>
+                        <div class="week-meta">${week.episodes.length} Episodes • ${totalTasks} Tasks</div>
+                    </div>
+                    <div class="week-progress">
+                        <span class="week-percentage">${weekPercentage}%</span>
+                    </div>
+                    <div class="expand-icon">▼</div>
+                `;
+                
+                // Episodes Container
+                const episodesContainer = document.createElement('div');
+                episodesContainer.className = 'episodes';
+                
+                week.episodes.forEach((episode, epIndex) => {
+                    const episodeDiv = document.createElement('div');
+                    episodeDiv.className = 'episode';
+                    
+                    const episodeCheckboxId = `w${weekIndex}-e${epIndex}`;
+                    const episodeChecked = episode.tasks.every((task, taskIndex) => 
+                        progress[`w${weekIndex}-e${epIndex}-t${taskIndex}`]
+                    );
+
+                    // Video Button Logic
+                    let videoButton = '';
+                    let videoContainer = '';
+                    if (episode.videoId) {
+                        videoButton = `<button class="btn-video" onclick="toggleVideo(this, '${episode.videoId}')">📺 Watch Tutorial</button>`;
+                        videoContainer = `<div class="video-container"></div>`;
+                    }
+                    
+                    episodeDiv.innerHTML = `
+                        <div class="episode-header">
+                            <div style="display:flex; align-items:center; gap:15px; flex:1;">
+                                <input type="checkbox" class="episode-checkbox" 
+                                    id="${episodeCheckboxId}" 
+                                    ${episodeChecked ? 'checked' : ''}
+                                    onchange="toggleEpisode(${weekIndex}, ${epIndex})">
+                                <div class="episode-title">${episode.title}</div>
+                            </div>
+                            ${videoButton}
+                        </div>
+                        ${videoContainer}
+                        <div class="episode-goal">🎯 Goal: ${episode.goal}</div>
+                        <div class="tasks" id="tasks-${weekIndex}-${epIndex}"></div>
+                    `;
+                    
+                    episodesContainer.appendChild(episodeDiv);
+                    
+                    // Render tasks
+                    const tasksContainer = episodeDiv.querySelector(`#tasks-${weekIndex}-${epIndex}`);
+                    episode.tasks.forEach((task, taskIndex) => {
+                        const taskId = `w${weekIndex}-e${epIndex}-t${taskIndex}`;
+                        const isChecked = progress[taskId] || false;
+                        
+                        const taskDiv = document.createElement('div');
+                        taskDiv.className = `task ${isChecked ? 'completed' : ''}`;
+                        taskDiv.innerHTML = `
+                            <input type="checkbox" class="task-checkbox" 
+                                   id="${taskId}"
+                                   ${isChecked ? 'checked' : ''}
+                                   onchange="toggleTask('${taskId}', ${weekIndex}, ${epIndex})">
+                            <label class="task-text" for="${taskId}">${task}</label>
+                        `;
+                        
+                        tasksContainer.appendChild(taskDiv);
+                    });
+                });
+                
+                weekCard.appendChild(header);
+                weekCard.appendChild(episodesContainer);
+                grid.appendChild(weekCard);
+            });
+            
+            updateOverallProgress();
+        }
+        
+        window.toggleVideo = function(btn, videoId) {
+            const episodeDiv = btn.closest('.episode');
+            const container = episodeDiv.querySelector('.video-container');
+            
+            // Toggle visibility
+            container.classList.toggle('show');
+            
+            // Lazy load iframe content if empty
+            if (container.classList.contains('show') && container.innerHTML === '') {
+                container.innerHTML = `
+                    <iframe 
+                        src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>`;
+                btn.innerHTML = '❌ Close Video';
+                btn.style.background = '#2d3748';
+            } else if (!container.classList.contains('show')) {
+                // Pause video by removing it (saves memory/data)
+                container.innerHTML = '';
+                btn.innerHTML = '📺 Watch Tutorial';
+                btn.style.background = '#ff0000';
+            }
+        }
+
+        window.toggleWeek = function(weekIndex) {
+            const weekCard = document.getElementById(`week-${weekIndex}`);
+            weekCard.classList.toggle('expanded');
+        }
+        
+        window.toggleTask = function(taskId, weekIndex, epIndex) {
+            const checkbox = document.getElementById(taskId);
+            progress[taskId] = checkbox.checked;
+            saveProgress();
+            
+            // Update task styling
+            const taskDiv = checkbox.closest('.task');
+            taskDiv.classList.toggle('completed', checkbox.checked);
+            
+            // Check if episode is complete
+            const episode = tutorialData[weekIndex].episodes[epIndex];
+            const allTasksComplete = episode.tasks.every((task, taskIndex) => {
+                return progress[`w${weekIndex}-e${epIndex}-t${taskIndex}`];
+            });
+            
+            // Update episode checkbox
+            const episodeCheckbox = document.getElementById(`w${weekIndex}-e${epIndex}`);
+            episodeCheckbox.checked = allTasksComplete;
+            
+            updateOverallProgress();
+            
+            // Show celebration if episode complete
+            if (allTasksComplete && checkbox.checked) {
+                celebrate(`Episode Complete: ${episode.title}! 🎉`);
+            }
+            
+            // Check if week complete
+            const week = tutorialData[weekIndex];
+            const weekComplete = week.episodes.every((ep, idx) => {
+                return ep.tasks.every((task, taskIdx) => {
+                    return progress[`w${weekIndex}-e${idx}-t${taskIdx}`];
+                });
+            });
+            
+            if (weekComplete) {
+                const weekCard = document.getElementById(`week-${weekIndex}`);
+                weekCard.classList.add('completed');
+                celebrate(`Week ${week.week} Complete! 🏆 ${week.title}!`);
+            }
+        }
+        
+        window.toggleEpisode = function(weekIndex, epIndex) {
+            const episodeCheckbox = document.getElementById(`w${weekIndex}-e${epIndex}`);
+            const isChecked = episodeCheckbox.checked;
+            
+            const episode = tutorialData[weekIndex].episodes[epIndex];
+            episode.tasks.forEach((task, taskIndex) => {
+                const taskId = `w${weekIndex}-e${epIndex}-t${taskIndex}`;
+                progress[taskId] = isChecked;
+                
+                const taskCheckbox = document.getElementById(taskId);
+                taskCheckbox.checked = isChecked;
+                
+                const taskDiv = taskCheckbox.closest('.task');
+                taskDiv.classList.toggle('completed', isChecked);
+            });
+            
+            saveProgress();
+            updateOverallProgress();
+            
+            if (isChecked) {
+                celebrate(`Episode Complete: ${episode.title}! 🎉`);
+            }
+        }
+        
+        function updateOverallProgress() {
+            let totalTasks = 0;
+            let completedTasks = 0;
+            
+            tutorialData.forEach((week, weekIndex) => {
+                week.episodes.forEach((episode, epIndex) => {
+                    episode.tasks.forEach((task, taskIndex) => {
+                        totalTasks++;
+                        if (progress[`w${weekIndex}-e${epIndex}-t${taskIndex}`]) {
+                            completedTasks++;
+                        }
+                    });
+                });
+            });
+            
+            const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('totalTasks').textContent = totalTasks;
+            document.getElementById('overallProgressBar').style.width = percentage + '%';
+            document.getElementById('overallPercentage').textContent = percentage + '%';
+            
+            // Check if all complete
+            if (percentage === 100 && completedTasks > 0) {
+                setTimeout(() => {
+                    celebrate('🎊 CONGRATULATIONS! 🎊 You completed the entire RPG tutorial! You\'re now a Godot developer! 🚀');
+                }, 500);
+            }
+        }
+        
+        window.celebrate = function(message) {
+            const celebration = document.getElementById('celebration');
+            const overlay = document.getElementById('overlay');
+            const text = document.getElementById('celebrationText');
+            
+            text.textContent = message;
+            celebration.classList.add('show');
+            overlay.classList.add('show');
+            
+            // Auto hide after 3 seconds for small celebrations
+            if (!message.includes('CONGRATULATIONS') && !message.includes('Loaded')) {
+                setTimeout(() => {
+                    closeCelebration();
+                }, 3000);
+            }
+        }
+
+        window.closeCelebration = function() {
+            document.getElementById('celebration').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        // --- Reset Logic ---
+
+        window.showResetModal = function() {
+            document.getElementById('resetModal').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        window.closeResetModal = function() {
+            document.getElementById('resetModal').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        window.confirmReset = function() {
+            progress = {};
+            saveProgress();
+            renderWeeks();
+            closeResetModal();
+        }
+        
+        window.exportProgress = function() {
+            const dataStr = JSON.stringify(progress, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'godot-rpg-progress.json';
+            link.click();
+        }
+
+        window.importProgress = function(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (typeof importedData === 'object' && importedData !== null) {
+                        progress = importedData;
+                        saveProgress();
+                        renderWeeks();
+                        celebrate("Progress Loaded! 📂");
+                    } else {
+                        alert("Invalid file format");
+                    }
+                } catch (err) {
+                    alert("Error parsing JSON file");
+                }
+                input.value = ''; // Reset so the same file can be selected again
+            };
+            reader.readAsText(file);
+        }
+        
+        // Initialize on load
+        renderWeeks();
+    </script>
 </body>
 </html>
